@@ -1,0 +1,28 @@
+import platform, sys, os
+if 'google.colab' in sys.modules:
+    # install PyGMTSAR stable version from PyPI
+    !{sys.executable} -m pip install -q pygmtsar
+    # alternatively, install PyGMTSAR development version from GitHub
+    #!{sys.executable} -m pip install -Uq git+https://github.com/mobigroup/gmtsar.git@pygmtsar2#subdirectory=pygmtsar
+    # use PyGMTSAR Google Colab installation script to install binary dependencies
+    # script URL: https://github.com/AlexeyPechnikov/pygmtsar/blob/pygmtsar2/pygmtsar/pygmtsar/data/google_colab.sh
+    import importlib.resources as resources
+    with resources.as_file(resources.files('pygmtsar.data') / 'google_colab.sh') as google_colab_script_filename:
+        !sh {google_colab_script_filename}
+    # enable custom widget manager as required by recent Google Colab updates
+    from google.colab import output
+    output.enable_custom_widget_manager()
+    # initialize virtual framebuffer for interactive 3D visualization; required for headless environments
+    import xvfbwrapper
+    display = xvfbwrapper.Xvfb(width=800, height=600)
+    display.start()
+
+# specify GMTSAR installation path
+PATH = os.environ['PATH']
+if PATH.find('GMTSAR') == -1:
+    PATH = os.environ['PATH'] + ':/usr/local/GMTSAR/bin/'
+    %env PATH {PATH}
+
+# display PyGMTSAR version
+from pygmtsar import __version__
+__version__
